@@ -1,0 +1,25 @@
+- name: configure & start grafana
+  hosts: grafana
+  tasks:
+    - name: Copy deb grafana
+      #Можно было бы сразу wgetом пакет в докер шляхнуть, но без впна не работает
+      ansible.builtin.copy:
+        src: grafana-enterprise_12.3.1_20271043721_linux_amd64.deb
+        dest: /tmp/
+
+    - name: Install grafana
+      ansible.builtin.apt:
+        deb: /tmp/grafana-enterprise_12.3.1_20271043721_linux_amd64.deb
+    - name: copy config
+      ansible.builtin.copy:
+        src: grafana.ini
+        dest: /etc/grafana/
+    - name: copy provisioning dir
+      ansible.builtin.copy:
+        src: provisioning/
+        dest: /etc/grafana/provisioning/
+        mode: '0755'
+
+    - name: Start grafana
+      ansible.builtin.shell: |
+        setsid grafana-server --config=/etc/grafana/grafana.ini --homepath=/usr/share/grafana > /var/log/grafana.log 2>&1 &

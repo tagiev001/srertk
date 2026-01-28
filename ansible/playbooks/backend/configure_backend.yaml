@@ -1,0 +1,38 @@
+- name: configure backend
+  hosts: backend
+
+
+
+  tasks:
+    - name: Install nginx, curl
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - nginx
+        - curl
+
+    - name: Set index.html
+      ansible.builtin.template:
+        src: index.html
+        dest: /var/www/html/index.html
+
+    - name: Set nginx.conf
+      ansible.builtin.template:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+
+#    - name: Stop nginx if started
+ #     ansible.builtin.command: "nginx -s stop"
+
+    - name: Start nginx
+      ansible.builtin.command: "nginx"
+
+    - name: Check status
+      ansible.builtin.command: "curl {{inventory_hostname}}:8080"
+      register: check_result
+
+    - name: show status
+      ansible.builtin.debug:
+        msg: "curl hostname:8080; output:{{ check_result.stdout }}"

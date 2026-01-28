@@ -1,0 +1,31 @@
+- name: add hosts in monitoring
+  hosts: all
+  tasks:
+    - name: Install wget
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - wget
+        - tar
+
+    - name: Install nginx exporter
+      ansible.builtin.command: "wget https://github.com/nginx/nginx-prometheus-exporter/releases/download/v1.4.2/nginx-prometheus-exporter_1.4.2_linux_amd64.tar.gz"
+
+    - name: untar exporter
+      ansible.builtin.unarchive:
+        src: nginx-prometheus-exporter_1.4.2_linux_amd64.tar.gz
+        dest: /usr/local/bin
+        remote_src: yes
+
+    - name: configure and start backend exporters
+      include_tasks: exbackend.yaml
+      when: inventory_hostname in groups['backend']
+
+    - name: configure and start lb exporters
+      include_tasks: exlb.yaml
+      when: inventory_hostname in groups['lb']
+
+    - name: start default exporter
+      include_tasks: exbasic.yaml

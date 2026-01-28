@@ -1,0 +1,108 @@
+networks:
+  backend:
+    name: backend
+    driver: bridge
+    internal: false
+#  dockervlan:
+#    name: dockervlan
+#    driver: macvlan
+#    driver_opts:
+#      parent: br0
+#    ipam:
+#      config:
+#        - subnet: "192.168.1.0/24"
+#          ip_range: "192.168.1.64/26"
+#          gateway: "192.168.1.1"
+services:
+  ansible:
+    build:
+      context: .
+      dockerfile: ansible/Dockerfile
+    container_name: ansible
+    hostname: ansible
+    volumes:
+    - ./ansible/playbooks:/ansible/playbooks
+    command: /usr/sbin/sshd -D
+    networks:
+      - backend
+
+  mon:
+    build:
+      context: .
+      dockerfile: monitoring/Dockerfile
+    container_name: mon
+    hostname: mon
+    command: /usr/sbin/sshd -D
+    volumes:
+    - ./monitoring/metrics:/var/lib/victoria-metrics
+    ports:
+      - 8428:8428
+      - 9091:9090
+    networks:
+      - backend
+  graf:
+    build:
+      context: .
+      dockerfile: grafana/Dockerfile
+    container_name: grafana
+    hostname: grafana
+    command: /usr/sbin/sshd -D
+    volumes:
+    - ./grafana/data:/var/lib/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - backend
+    depends_on:
+      - mon
+  lb1:
+    privileged: true
+    build:
+      context: .
+      dockerfile: lb1/Dockerfile
+    container_name: lb1
+    hostname: lb1
+    command: /usr/sbin/sshd -D
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+#     - dockervlan
+      - backend
+
+  lb2:
+    privileged: true
+    build:
+      context: .
+      dockerfile: lb2/Dockerfile
+    container_name: lb2
+    hostname: lb2
+    command: /usr/sbin/sshd -D
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      - backend
+
+
+
+  backend1:
+    build:
+      context: .
+      dockerfile: backend1/Dockerfile
+    container_name: backend1
+    hostname: backend1
+    command: /usr/sbin/sshd -D
+    networks:
+      - backend
+
+  backend2:
+    build:
+      context: .
+      dockerfile: backend2/Dockerfile
+    container_name: backend2
+    hostname: backend2
+    command: /usr/sbin/sshd -D
+    networks:
+      - backend
+

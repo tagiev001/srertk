@@ -1,0 +1,10 @@
+- name: copy config
+  ansible.builtin.copy:
+    src: kpmaster.conf
+    dest: /etc/keepalived/keepalived.conf
+
+- name: start keepalived
+  ansible.builtin.command: "keepalived -f /etc/keepalived/keepalived.conf &"
+- name: Wait 5 seconds for keepalived VIP
+  ansible.builtin.pause:
+    seconds: 5

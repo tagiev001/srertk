@@ -1,0 +1,9 @@
+- name: untar node exporter to remote
+  ansible.builtin.unarchive:
+    src: node_exporter-1.10.2.linux-amd64.tar.gz
+    dest: /usr/local/bin
+    extra_opts:
+      - --strip-components=1
+- name: start node exp
+  ansible.builtin.shell: |
+    setsid node_exporter < /dev/null > /var/log/node_exporter.log 2>&1 &

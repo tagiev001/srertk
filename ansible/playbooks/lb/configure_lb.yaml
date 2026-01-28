@@ -1,0 +1,38 @@
+- name: configure lb
+  hosts: lb
+  tasks:
+ 
+#  tasks:
+    - name: Install nginx kp
+      ansible.builtin.package:
+        name: " {{ item }} "
+        state: present
+        update_cache: yes
+      loop:
+        - nginx
+        - keepalived
+#
+#    - name: Set nginx.conf
+#      ansible.builtin.template:
+#        src: nginx.conf
+#        dest: /etc/nginx/nginx.conf
+#
+#    - name: Start nginx
+#      ansible.builtin.command: "nginx"
+
+
+- name: configure keepalived MASTER
+  hosts: master
+  tasks:
+    - include_tasks: configure_master.yaml
+
+- name: configure keepalived SLAVE
+  hosts: slave
+  tasks:
+    - include_tasks: configure_slave.yaml
+
+
+- name: configre nginx
+  hosts: lb
+  tasks:
+    - include_tasks: configure_nginx.yaml

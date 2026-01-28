@@ -1,0 +1,17 @@
+- name: start nginx exporter
+  ansible.builtin.shell: |
+    setsid nginx-prometheus-exporter --nginx.scrape-uri=http://localhost:80/stub_status -web.listen-address=:9113 < /dev/null > /var/log/nginx-exporter.log 2>&1 &
+
+- name: get keepalived exporter
+  ansible.builtin.shell: |
+    wget https://github.com/mehdy/keepalived-exporter/releases/download/v1.7.0/keepalived-exporter_1.7.0_linux_amd64.tar.gz
+- name: untar
+  ansible.builtin.unarchive:
+    src: keepalived-exporter_1.7.0_linux_amd64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: start keepalived exporter
+  ansible.builtin.shell: |
+    setsid keepalived-exporter < /dev/null > /var/log/keepalived-exporter.log 2>&1 &
+

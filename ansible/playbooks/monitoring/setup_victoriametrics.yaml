@@ -1,0 +1,27 @@
+- name: Create victoriametric user
+  ansible.builtin.user:
+    name: victoriametrics
+    shell: /bin/bash
+
+- name: create dir for vitya if not exist
+  ansible.builtin.file:
+    path: /var/lib/victoria-metrics
+    state: directory
+    owner: victoriametrics
+    group: victoriametrics
+    mode: '0755'
+
+- name: copy victoria to remote
+  ansible.builtin.copy:
+    src: victoria-metrics-linux-amd64-v1.134.0.tar.gz
+    dest: /usr/local/bin/
+    owner: victoriametrics
+    group: victoriametrics
+    mode: '0755'
+
+- name: untar  wmurdyak
+  ansible.builtin.unarchive:
+    src: victoria-metrics-linux-amd64-v1.134.0.tar.gz
+    dest: /usr/local/bin
+
+   # tar -xzvf /usr/local/bin/victoria-metrics-linux-amd64-v1.134.0.tar.gz -C /usr/local/bin

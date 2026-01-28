@@ -1,0 +1,16 @@
+#- name: Install nginx kp
+#  ansible.builtin.package:
+#    name: " {{ item }} "
+#    state: present
+#    update_cache: yes
+#  loop:
+#   - nginx
+#   - keepalived
+
+- name: Set nginx.conf
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Start nginx
+  ansible.builtin.command: "nginx"

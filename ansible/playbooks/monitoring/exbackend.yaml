@@ -1,0 +1,3 @@
+- name: start exporter
+  ansible.builtin.shell: |
+    setsid nginx-prometheus-exporter --nginx.scrape-uri=http://localhost:8080/stub_status -web.listen-address=:9113 < /dev/null > /var/log/nginx-exporter.log 2>&1 &

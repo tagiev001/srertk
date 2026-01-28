@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s
+
+remote_write:
+  - url: "http://mon:8428/api/v1/write"
+
+scrape_configs:
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['backend1:9113','backend2:9113','lb1:9113','lb2:9113']
+
+  - job_name: 'keepalived'
+    static_configs:
+      - targets: ['lb1:9165','lb2:9165']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['backend1:9100','backend2:91100','lb1:9100','lb2:9100','mon:9100','grafana:9100']
+
+

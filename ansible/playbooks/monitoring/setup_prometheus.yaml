@@ -1,0 +1,37 @@
+- name: Create victoriametric user
+  ansible.builtin.user:
+    name: prometheus
+    shell: /bin/bash
+
+- name: create dir for vitya if not exist
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+
+- name: copy prometheus to remote
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/prometheus/
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+  loop:
+    - prometheus.yaml
+    - prometheus-3.5.1.linux-amd64.tar.gz
+
+- name: untar  wmurdyak
+  ansible.builtin.unarchive:
+    src: /etc/prometheus/prometheus-3.5.1.linux-amd64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+    extra_opts:
+      - --strip-components=1
+
+#    - name: start govno
+#      ansible.builtin.shell: |
+#        nohup /usr/local/bin/prometheus --config.file=/etc/prometheus/prometheus.yaml &
+
+

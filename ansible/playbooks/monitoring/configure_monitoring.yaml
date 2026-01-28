@@ -1,0 +1,32 @@
+- name: configure monitorings
+  hosts: monitoring
+
+  tasks:
+    - name: install sudo
+      ansible.builtin.package:
+        name: sudo
+        state: present
+        update_cache: yes
+      when: "{{ inventory_hostname == 'mon' }}"
+
+    - name: prometheus
+      include_tasks: setup_prometheus.yaml
+      when: "{{ inventory_hostname == 'mon' }}"
+
+    - name: victoriametrics
+      include_tasks: setup_victoriametrics.yaml
+      when: "{{ inventory_hostname == 'mon' }}"
+
+    - name: copy script
+      ansible.builtin.copy:
+        src: start.sh
+        dest: /usr/local/bin
+        mode: '777'
+      when: "{{ inventory_hostname == 'mon' }}"
+
+    - name: start promo/victoria
+      ansible.builtin.shell: |
+        nohup start.sh &
+      when: "{{ inventory_hostname == 'mon' }}"
+
+
