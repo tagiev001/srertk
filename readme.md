@@ -104,15 +104,36 @@ srertk
 docker compose up -d
 ```
 Далее необходимо через контейнер **ansible** установить все остальное, по порядку:
+
+Войти в ansible контейнер
 ```
-docker exec -it ansible bash # Войти в ansible контейнер
-ansible-playbook localhost/ssh-keyscan.yaml # Генерирует в контейнере ansible файл /root/.ssh/known_hosts
-ansible-playbook backend/configure_backend.yaml # Устанавливает и запускает backend на backend1 backend2
-ansible-playbook lb/configure_lb.yaml # Устанавливает и запускает софт для балансировки трафика на lb1 lb2
-ansible-playbook monitoring/add_exporters.yaml # Устанавливает и запускает экспортеры для сбора метрик на все контейнеры
-ansible-playbook monitoring/configure_monitoring.yaml # Настраивает и запускает сервер сбора и хранения метрик (mon)
-ansible-playbook monitoring/setup_grafana.yaml # Настраивает и запускает сервер виртуализации мертик (grafana)
+docker exec -it ansible bash 
 ```
+Генерирует в контейнере ansible файл /root/.ssh/known_hosts
+```
+ansible-playbook localhost/ssh-keyscan.yaml
+```
+Устанавливает и запускает backend на backend1 backend2
+```
+ansible-playbook backend/configure_backend.yaml
+```
+Устанавливает и запускает софт для балансировки трафика на lb1 lb2
+```
+ansible-playbook lb/configure_lb.yaml
+```
+Устанавливает и запускает экспортеры для сбора метрик на все контейнеры
+```
+ansible-playbook lb/add_exporters.yaml
+```
+Настраивает и запускает сервер сбора и хранения метрик (mon)
+```
+ansible-playbook monitoring/configure_monitoring.yaml
+```
+Настраивает и запускает сервер виртуализации мертик (grafana)
+```
+ansible-playbook monitoring/setup_grafana.yaml 
+```
+
 # Тестирование
 ### Проверка балансировки трафика
 
@@ -170,7 +191,7 @@ docker stop lb1
 ```
 Спустя время проверить lb2 через **ansible контейнер** 
 ```
-ansible lb2 -i inventory -a "ip addr"
+ansible lb -i inventory.ini -l lb2 -a "ip addr"
 ```
 Вывод:
 ```
@@ -192,6 +213,17 @@ lb2 | CHANGED | rc=0 >>
 ```
 while true; do curl -s http://172.18.1.1; sleep 1; done
 ```
+# Мониторинг
+grafana доступна на 3000 порту(админ аккаунт не настроен, при первом входе можно задать пароль)
+
+prometheus доступен на 9091 порту
+
+victoriametrics доступен на 8428
+
+
+
+
+
 
 ### Предустановленый дашборд
 ![Предустановленный дашборд](grafanadashboard.png)
