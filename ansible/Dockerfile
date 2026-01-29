@@ -10,7 +10,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/ansible-archive-keyring.gpg] http:/
 
 RUN apt update -y && apt install -y ansible
 
-COPY ./ansible/ssh-keys/private/id_rsa /root/.ssh/id_rsa
+COPY --chmod=700 ./ansible/ssh-keys/private/id_rsa /root/.ssh/id_rsa
 
 COPY ./sshd_config /etc/ssh/sshd_config
 
