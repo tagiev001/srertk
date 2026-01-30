@@ -155,8 +155,10 @@ backend2
 ### Проверка работоспособности keepalived
 
 1. **C контейнера ansible**(как попасть в контейнер см. Развертывание)
+
+   Узнать владельца vip
 ```
-ansible lb -i inventroy -a "ip addr" # проверить какая нода владеет VIP(172.18.1.1)
+ansible lb -i inventory.ini -a "ip addr"
 ```
 Вывод:
 ```
