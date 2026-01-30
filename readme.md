@@ -123,7 +123,7 @@ ansible-playbook lb/configure_lb.yaml
 ```
 Устанавливает и запускает экспортеры для сбора метрик на все контейнеры
 ```
-ansible-playbook lb/add_exporters.yaml
+ansible-playbook monitoring/add_exporters.yaml
 ```
 Настраивает и запускает сервер сбора и хранения метрик (mon)
 ```
