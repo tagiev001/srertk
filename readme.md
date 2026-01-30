@@ -99,6 +99,12 @@ srertk
 ```
 
 # Развертывание
+
+Скопировать репозиторий и перейти в него
+```
+git clone http://github.com/tagiev001/srertk
+cd srertk
+```
 Из директории репозитрия 
 ```
 docker compose up -d
